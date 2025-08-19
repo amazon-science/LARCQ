@@ -1,5 +1,5 @@
 accelerate==0.23.0
-aiohttp==3.8.5
+aiohttp==3.12.14
 altair==5.1.2
 datasets==2.14.5
 docker-pycreds==0.4.0
