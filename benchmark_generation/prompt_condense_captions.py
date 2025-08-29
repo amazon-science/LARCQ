@@ -21,16 +21,16 @@ instruction = Template(
 examples = [
     {
         "input caption": "Brown Bear Ursus Arctos Distant growls, Distant gulls at times, Running water in background",
-        "condensed caption": "Bear growls with gulls and water in background"
+        "condensed caption": "Bear growls with gulls and water in background",
     },
     {
         "input caption": "Tropical Forest Wet Evergreen NIGHT In cocoa plantation with frogs",
-        "condensed caption": "Frogs in tropical forest"
+        "condensed caption": "Frogs in tropical forest",
     },
     {
         "input caption": "Romania 2 Trolleybus pneumatic doors open",
-        "condensed caption": "Trolleybus doors open"
-    }
+        "condensed caption": "Trolleybus doors open",
+    },
 ]
 
 examples = f"""{json.dumps(examples, ensure_ascii=False)}"""

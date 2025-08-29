@@ -32,7 +32,7 @@ examples = [
         "text description 3": "Bear shouts, people are talking.",
         "text description 4": "Car horn buzzles.",
         "text description 5": "Birds sing at times, water is flushing.",
-        "your ranking result": "2"
+        "your ranking result": "2",
     },
     {
         "text query": "Thunder - Thunder without rain. Some water droplets. Cicadas in background.",
@@ -41,8 +41,8 @@ examples = [
         "text description 3": "Lion shouts, people are talking.",
         "text description 4": "Car horn buzzles.",
         "text description 5": "Thunder in the sky. Water drops. Cicadas sound.",
-        "your ranking result": "5"
-    }
+        "your ranking result": "5",
+    },
 ]
 
 examples = f"""{json.dumps(examples, ensure_ascii=False)}"""

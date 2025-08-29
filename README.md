@@ -1,6 +1,18 @@
 # 🚀 Official codes of our Interspeech paper *On Retrieval of Long Audios with Complex Text Queries*
 
 * Project website https://sites.google.com/view/larcq
+* Paper https://www.isca-archive.org/interspeech_2025/yang25n_interspeech.html
+```
+@inproceedings{yang25n_interspeech,
+  title     = {On Retrieval of Long Audios with Complex Text Queries},
+  author    = {Ruochu Yang and Milind Rao and Harshavardhan Sundar and Anirudh Raju and Aparna Khare and Srinath Tankasala and Di He and Venkatesh Ravichandran},
+  year      = {2025},
+  booktitle = {Interspeech 2025},
+  pages     = {2660--2664},
+  doi       = {10.21437/Interspeech.2025-2085},
+  issn      = {2958-1796},
+}
+```
 
 # Prerequisite
 
@@ -19,8 +31,59 @@ Save the benchmarks in the `datasets` folder.
 
 Due to license restriction, we cannot open-source our Clotho_LARCQ and SoundDescs_LARCQ benchmarks. However, we provide the codes of generating the benchmarks. Actually, you can use our codes to generate any LARCQ-style benchmark you want.
 
-## 3. Nvidia GPUs
-The results in the paper are generated in a computer with Nvidia GPUs. Better to configure `nvidia-smi` ready.
+## 3. Download models
+* Download the `clap-htsat-fused` model from the Hugging Face [model link](https://huggingface.co/laion/clap-htsat-fused). Save the model in the `models` folder.
+
+* Download the `gpt2` model from the Hugging Face [model link](https://huggingface.co/openai-community/gpt2). Save the model in the `models` folder.
+
+* Download the `Llama-2-7b-chat-hf-qformer` folder from the Google Drive [website link](https://drive.google.com/drive/u/0/folders/1W8ZtlhXNZ2IdVcKWsQpLD4jVw98brYDM). Save the folder in the `models` folder.
+
+* Download the `stage5_epoch2` folder from the Google Drive [website link](https://drive.google.com/drive/u/0/folders/1W8ZtlhXNZ2IdVcKWsQpLD4jVw98brYDM). Unzip and save the folder in the `models` folder.
+
+* Download the `clapcap_weights_2023.pth` checkpoint from the Hugging Face [website link](https://huggingface.co/microsoft/msclap/blob/main/clapcap_weights_2023.pth). Save the checkpoint in the `models` folder.
+
+* Download the `opt-iml-max-1.3b` folder from the Hugging Face [website link](https://huggingface.co/facebook/opt-iml-max-1.3b). Unzip and save the folder in the `models` folder.
+
+* Download the `foundation.pt` checkpoint from the Hugging Face [website link](https://huggingface.co/nvidia/audio-flamingo). Save the checkpoint in the `models` folder.
+
+* Download the `ms-marco-MiniLM-L-6-v2` folder from the Hugging Face [website link](https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2/tree/main). Unzip and save the folder in the `models` folder.
+
+## 4. Nvidia GPUs
+The results in the paper are generated in a computer with Nvidia GPUs. Better to have four GPUs and configure `nvidia-smi` ready.
+
+
+# LARCQ Benchmark Generation
+
+## 1. Clotho_LARCQ benchmark
+
+We provide the codes of generating our Clotho_LARCQ benchmark based on Clotho Version 2.1 dataset so that you can follow it to create any LARCQ benchmark you want.
+
+(1) Download the `clotho_audio_evaluation.7z` folder and the `clotho_captions_evaluation.csv` file from the Zenodo [website link](https://zenodo.org/records/4783391). Save them in the `datasets/Clotho` folder.
+
+(2) Synthesize long-audio-long-query pairs as LARCQ benchmarks
+
+Run terminal command `python -m benchmark_generation.synthesize`
+
+The raw LARCQ captions are saved as `datasets/Clotho_LARCQ/raw_LARCQ_captions.csv`
+The LARCQ audios are saved as `'datasets/Clotho_LARCQ/audios/`
+
+(3) Run LLMs to refine the raw LARCQ captions
+
+We use two options to refine the raw LARCQ captions into natural long queries.
+
+* Condense the raw captions
+Run terminal command `python -m benchmark_generation.llm_condense`  
+The condensed LARCQ captions are saved as `datasets/Clotho_LARCQ/condensed_caption.csv`
+
+* Rephrase the raw captions
+Run terminal command `python -m benchmark_generation.llm_rephrase`  
+The rephrased LARCQ captions are saved as `datasets/Clotho_LARCQ/rephrased_caption.csv`
+
+## 2. SoundDescs_LARCQ benchmark
+
+(1) Download the original SoundDescs dataset from the official GitHub [website link](https://github.com/akoepke/audio-retrieval-benchmark). Save them in the `datasets/SoundDescs` folder.
+
+(2) We filter for audios between 75-150 seconds with captions exceeding 150 characters as complex queries. This results in 1639 audio-query pairs, forming our SoundDescs-LARCQ benchmark.
 
 
 # Run Pipeline
@@ -28,10 +91,6 @@ The results in the paper are generated in a computer with Nvidia GPUs. Better to
 Our pipeline consists of two main parts: multi-modal retrieval and ALM/LLM refining.
 
 ## 1. Run multi-modal rertieval
-
-Download the `clap-htsat-fused` model from the Hugging Face [model link](https://huggingface.co/laion/clap-htsat-fused). Save the model in the `models` folder.
-
-Download the `gpt2` model from the Hugging Face [model link](https://huggingface.co/openai-community/gpt2). Save the model in the `models` folder.
 
 The retrieval scripts are in the folder `pipeline/multi_modal_retrieval`. Each script is independent and can be directly executed, which means that you can evaluate any method on any dataset for comprehensive comparison.
 
@@ -57,21 +116,11 @@ Retrieved short-list audios are saved as `results/retrieved_results/{benchmark}/
 
 In our paper, we use two ALMs, GAMA and Audio-Flamingo, to generate captions for the retrieved audios.
 
-(1) Downlowad the `Llama-2-7b-chat-hf-qformer` folder from the Google Drive [website link](https://drive.google.com/drive/u/0/folders/1W8ZtlhXNZ2IdVcKWsQpLD4jVw98brYDM). Save the folder in the `models` folder.
-
-Downlowad the `stage5_epoch2` folder from the Google Drive [website link](https://drive.google.com/drive/u/0/folders/1W8ZtlhXNZ2IdVcKWsQpLD4jVw98brYDM). Unzip the folder and save the entire folder in the `models` folder.
-
-Run terminal command `python -m pipeline.alm_llm_refining.run_gama`
+(1) Run terminal command `python -m pipeline.alm_llm_refining.run_gama`
 
 GAMA captioning results on the retrieved audios are saved as `results/alm_results/{benchmark}/retrieved_audios_gama.csv`
 
-(2) Downlowad the `clapcap_weights_2023.pth` checkpoint from the Hugging Face [website link](https://huggingface.co/microsoft/msclap/blob/main/clapcap_weights_2023.pth). Save the checkpoint in the `models` folder.
-
-Downlowad the `opt-iml-max-1.3b` folder from the Hugging Face [website link](https://huggingface.co/facebook/opt-iml-max-1.3b). Save the entire folder in the `models` folder.
-
-Downlowad the `foundation.pt` checkpoint from the Hugging Face [website link](https://huggingface.co/nvidia/audio-flamingo). Save the checkpoint in the `models` folder.
-
-Run terminal command `python -m pipeline.alm_llm_refining.run_flamingo`
+(2) Run terminal command `python -m pipeline.alm_llm_refining.run_flamingo`
 
 Audio-Flamingo captioning results on the retrieved audios are saved as `results/alm_results/{benchmark}/retrieved_audios_flamingo.csv`
 
@@ -91,8 +140,6 @@ LLM re-ranking results are saved as `results/llm_results/{benchmark}/{ALM}_llm_r
 
 (2) Use miniLM
 
-* Downlowad the `ms-marco-MiniLM-L-6-v2` folder from the Hugging Face [website link](https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2/tree/main). Save the entire folder in the `models` folder.
-
 * Choose an ALM captioning file `results/alm_results/{benchmark}/retrieved_audios_{ALM}.csv`, like `results/alm_results/Clotho_LARCQ/retrieved_audios_gama.csv`
 
 * Run terminal command `python -m pipeline.alm_llm_refining.cross_encoder_ranking` 
@@ -107,38 +154,4 @@ Finally, we evalute the following final results to obtain all the metrics R@1 an
 LLM results: `results/llm_results/{benchmark}/{ALM}_llm_ranking.csv`  
 miniLM results: `results/llm_results/{benchmark}/{ALM}_cross_encoder_ranking.csv`
 
-Run terminal command `python -m evaluate_final_result` 
-
-
-# LARCQ Benchmark Generation
-
-## 1. Clotho_LARCQ benchmark
-
-We provide the codes of generating our Clotho_LARCQ benchmark based on Clotho Version 2.1 dataset so that you can follow it to create any LARCQ benchmark you want.
-
-(1) Downlowad the `clotho_audio_evaluation.7z` folder and the `clotho_captions_evaluation.csv` file from the Zenodo [website link](https://zenodo.org/records/4783391). Save them in the `datasets/Clotho` folder.
-
-(2) Synthesize long-audio-long-query pairs as LARCQ benchmarks
-
-Run terminal command `python -m benchmark_generation.synthesize`
-
-The raw LARCQ captions are saved as `datasets/Clotho_LARCQ/raw_LARCQ_captions.csv`
-The LARCQ audios are saved as `'datasets/Clotho_LARCQ/audios/`
-
-(3) Run LLMs to refine the raw LARCQ captions
-
-We use two options to refine the raw LARCQ captions into natural long queries.
-
-* Condense the raw captions
-Run terminal command `python -m benchmark_generation.llm_condense`  
-The condensed LARCQ captions are saved as `datasets/Clotho_LARCQ/condensed_caption.csv`
-
-* Rephrase the raw captions
-Run terminal command `python -m benchmark_generation.llm_rephrase`  
-The rephrased LARCQ captions are saved as `datasets/Clotho_LARCQ/rephrased_caption.csv`
-
-## 2. SoundDescs_LARCQ benchmark
-
-(1) Downlowad the original SoundDescs dataset from the official GitHub [website link](https://github.com/akoepke/audio-retrieval-benchmark). Save them in the `datasets/SoundDescs` folder.
-
-(2) We filter for audios between 75-150 seconds with captions exceeding 150 characters as complex queries. This results in 1639 audio-query pairs, forming our SoundDescs-LARCQ benchmark.
+Run terminal command `python -m evaluate_final_result`
