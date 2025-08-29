@@ -36,7 +36,7 @@ sentencepiece==0.1.99
 sentry-sdk==1.31.0
 six==1.16.0
 sniffio==1.3.0
-starlette==0.27.0
+starlette==0.47.2
 tifffile==2023.9.26
 timm==0.4.5
 tokenizers==0.13.3
